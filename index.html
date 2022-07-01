@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Document</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<div class="background"></div>
+		<h1>Giga's JS Libraries</h1>
+		<main>
+			<div id="menu">
+				<div class="button active" data="all" onclick="changeIconSet(event)">
+					<img src="./assets/icons/squares_left.svg" draggable="false" alt="" style="filter: invert(1);">
+					<p>All Libraries</p>
+				</div>
+				<!--Generated Content-->
+			</div>
+
+			<div id="icon_grid">
+				<h2 id="icon_set_title">All Libraries</h2>
+				<div class="inner">
+					<!--Generated Content-->
+				</div>
+			</div>
+		</main>
+	</body>
+	<script src="./lib/jquery-3.6.0.min.js"></script>
+	<script>
+		let repo_data = [];
+		let all_tags = [];
+		let menu = '';
+		let grid = '';
+
+		$.ajax({
+			dataType: 'json',
+			url: 'https://api.github.com/users/Gigabyte5671/repos',
+			cache: true,
+			success: function(server_data) {
+				repo_data = server_data;
+				populatePage();
+			},
+			error: function(xhr) {
+				console.log("Error " + xhr.status);
+			}
+		});
+
+		function populatePage() {
+			grid += `<div id="all-repos" class="icon_set active">`;
+			repo_data.forEach((repo) => {
+				console.log(repo);
+				// if(repo !== 'all'){
+				// 	menu += `<div class="button" data="${repo}" onclick="changeIconSet(event)">`
+				// 		+     `<img src="${icon_dir + repo}/dir.ico" draggable="false" alt="">`
+				// 		+     `<p>${repo}</p>`
+				// 		+ `</div>`;
+				// }
+
+				if(repo.topics.includes('javascript-library')){
+					repo.topics.forEach((tag) => {
+						all_tags.push(tag);
+					});
+					grid += `<a href="${repo.html_url}" target="_blank" class="icon">`
+						 +     `<div class="inner">`
+						 // +         `<img src="${icon.file}" draggable="false" alt="">`
+						 +       `<p>${repo.name}</p>`
+						 +     `</div>`
+						 + `</a>`;
+				}
+			});
+			grid += `</div>`;
+
+			document.querySelector('#menu').innerHTML += menu;
+			document.querySelector('#icon_grid .inner').innerHTML = grid;
+		}
+	</script>
+</html>
